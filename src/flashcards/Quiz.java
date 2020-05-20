@@ -3,25 +3,30 @@ package flashcards;
 import java.util.Scanner;
 
 public class Quiz {
-    public static void takeQuiz(Deck deck, Scanner scanner) {
+    public static void takeQuiz(Log log, Scanner scanner, Deck deck, int numberCards) {
+
         String question;
         String userAnswer;
-        for (String answer : deck.getAnswers()) {
+        String response;
+        for (String answer : deck.getAnswers(numberCards)) {
             question = deck.getQuestion(answer);
+            log.printAndLogLine("Print the definition of \"" + question + "\":");
 
-            System.out.println("Print the definition of \"" + question + "\":");
-            userAnswer = scanner.nextLine();
+            userAnswer = log.scanAndLogLine(scanner);
+
             if (answer.equals(userAnswer)) {
-                System.out.println("Correct answer.");
+                response = "Correct answer.";
             } else if (deck.hasAnswer(userAnswer)){
-                System.out.println(
-                        "Wrong answer. The correct one is \"" + answer + "\", you've " +
+                response = "Wrong answer. (The correct one is \"" + answer + "\", you've " +
                                 "just written the definition of \"" +
-                                deck.getQuestion(userAnswer) + "\"."
-                );
+                                deck.getQuestion(userAnswer) + "\" card.)";
+                deck.incrementStat(answer);
             } else {
-                System.out.println("Wrong answer. The correct one is \"" + answer + "\".");
+                response = "Wrong answer. The correct one is \"" + answer + "\".";
+                deck.incrementStat(answer);
             }
+
+            log.printAndLogLine(response);
         }
     }
 }
